@@ -1,0 +1,31 @@
+{
+  "name": "iqmetry-ai-cognitive-assessment",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AI-Powered Real IQ Test & Cognitive Assessment Platform - Next.js 16, Tailwind 4, Framer Motion, Google GenAI SDK (gemini-3.8-flash)",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@google/genai": "^3.6.1",
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.1",
+    "framer-motion": "^14.14.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "lucide-react": "^1.81.0",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "tailwindcss": "^4.3.5"
+  }
+}
