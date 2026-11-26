@@ -287,8 +287,8 @@ export default function SurveyForm({ onStart, loading }) {
       </motion.button>
 
       <p className="-mt-3 text-center text-[11px] text-slate-500 dark:text-slate-500">
-        Soal dihasilkan hibrida oleh Gemini AI + bank psikometrik lokal. Jika AI sedang sibuk, bank
-        lokal langsung mengambil alih — tes tetap berjalan normal.
+        Soal dihasilkan hibrida oleh Gemini 3.8 Flash + bank psikometrik lokal. Jika AI sedang
+        sibuk, bank lokal langsung mengambil alih — tes tetap berjalan normal.
       </p>
     </motion.form>
   );

@@ -1,18 +1,23 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { pickLocalQuestions, normalizeQuestion, ALL_CATEGORIES } from '@/data/questionBank';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+/**
+ * Current free-tier stable Flash model (Google-recommended for new projects).
+ * Override via GEMINI_MODEL env var if needed.
+ */
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 /**
  * ============================================================
  *  POST /api/generate-questions
  * ============================================================
  *  Hybrid AI question generator:
- *   1. Tailored prompt → gemini-1.5-flash (JSON response MIME)
+ *   1. Tailored prompt → Google GenAI SDK (@google/genai),
+ *      gemini-3.8-flash with responseMimeType: "application/json"
  *   2. Validation + sanitization of every AI item
  *   3. Merge with the local 36-question psychometric bank
  *   4. If AI is missing / rate-limited / times out → local bank
@@ -75,8 +80,7 @@ async function generateWithGemini(payload) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+  const ai = new GoogleGenAI({ apiKey });
 
   const timeout = new Promise((_, reject) =>
     setTimeout(() => reject(new Error('gemini-timeout')), 35000)
@@ -84,18 +88,19 @@ async function generateWithGemini(payload) {
 
   try {
     const result = await Promise.race([
-      model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: buildPrompt(payload) }] }],
-        generationConfig: {
+      ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildPrompt(payload),
+        config: {
           responseMimeType: 'application/json',
           temperature: 0.8,
           topP: 0.95,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 16384,
         },
       }),
       timeout,
     ]);
-    const text = result?.response?.text?.() || '';
+    const text = result?.text || '';
     const json = extractJson(text);
     if (!json || !Array.isArray(json.questions)) return null;
     return json.questions;

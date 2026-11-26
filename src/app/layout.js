@@ -39,10 +39,11 @@ const themeInit = `
 export default function RootLayout({ children }) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <head>
+      <body className="font-sans">
+        {/* Runs before the first paint of the body content — prevents theme flash */}
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
-      </head>
-      <body className="font-sans">{children}</body>
+        {children}
+      </body>
     </html>
   );
 }

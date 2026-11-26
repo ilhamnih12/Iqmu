@@ -1,30 +1,31 @@
 {
   "name": "iqmetry-ai-cognitive-assessment",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "AI-Powered Real IQ Test & Cognitive Assessment Platform - Next.js, Tailwind, Framer Motion, Gemini",
+  "description": "AI-Powered Real IQ Test & Cognitive Assessment Platform - Next.js 16, Tailwind 4, Framer Motion, Google GenAI SDK (gemini-3.8-flash)",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^3.6.1",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.18.2",
+    "framer-motion": "^14.14.0",
     "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.2",
-    "lucide-react": "^0.469.0",
-    "next": "^14.2.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.6.2"
+    "jspdf": "^4.2.1",
+    "lucide-react": "^1.81.0",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.1"
   },
   "devDependencies": {
-    "autoprefixer": "^10.7.0",
-    "postcss": "^8.5.33",
-    "tailwindcss": "^3.4.19"
+    "@tailwindcss/postcss": "^4.3.5",
+    "tailwindcss": "^4.3.5"
   }
 }

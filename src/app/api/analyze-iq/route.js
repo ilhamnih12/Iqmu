@@ -1,21 +1,26 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { generateLocalReport } from '@/lib/report';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+/**
+ * Current free-tier stable Flash model (Google-recommended for new projects).
+ * Override via GEMINI_MODEL env var if needed.
+ */
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 /**
  * ============================================================
  *  POST /api/analyze-iq
  * ============================================================
  *  Sends the user's exact performance telemetry to
- *  gemini-1.5-flash for a deep psychological/cognitive report.
- *  Falls back to a fully-featured heuristic report if the API
- *  key is missing, rate-limited, or times out — the results
- *  dashboard ALWAYS renders complete.
+ *  gemini-3.8-flash (Google GenAI SDK) for a deep
+ *  psychological/cognitive report. Falls back to a
+ *  fully-featured heuristic report if the API key is missing,
+ *  rate-limited, or times out — the results dashboard ALWAYS
+ *  renders complete.
  * ============================================================
  */
 
@@ -58,8 +63,7 @@ async function analyzeWithGemini(telemetry) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+  const ai = new GoogleGenAI({ apiKey });
 
   const timeout = new Promise((_, reject) =>
     setTimeout(() => reject(new Error('gemini-timeout')), 35000)
@@ -67,19 +71,20 @@ async function analyzeWithGemini(telemetry) {
 
   try {
     const result = await Promise.race([
-      model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: buildAnalysisPrompt(telemetry) }] }],
-        generationConfig: {
+      ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildAnalysisPrompt(telemetry),
+        config: {
           responseMimeType: 'application/json',
           temperature: 0.75,
           topP: 0.9,
-          maxOutputTokens: 4096,
+          maxOutputTokens: 8192,
         },
       }),
       timeout,
     ]);
-    const text = result?.response?.text?.() || '';
-    const cleaned = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    const text = (result?.text || '').trim();
+    const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
     const start = cleaned.indexOf('{');
     const end = cleaned.lastIndexOf('}');
     if (start === -1 || end === -1) return null;

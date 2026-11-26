@@ -23,7 +23,7 @@ const METHODOLOGY = [
   {
     icon: Cpu,
     title: 'Generator Hibrida AI',
-    desc: 'Soal adaptif dari Gemini 1.5 Flash yang digabung dengan bank psikometrik lokal 36 soal — tes tidak pernah gagal muat.',
+    desc: 'Soal adaptif dari Gemini 3.8 Flash (Google GenAI SDK) yang digabung dengan bank psikometrik lokal 36 soal — tes tidak pernah gagal muat.',
     accent: 'from-violet-500/15 to-violet-500/5 text-violet-600 dark:text-violet-300',
   },
   {
